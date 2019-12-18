@@ -1,0 +1,12 @@
+{
+    "require": {
+        "workerman/channel": "^1.0",
+        "workerman/workerman": "^3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "core\\": "core/",
+            "conf\\": "conf/"
+        }
+    }
+}

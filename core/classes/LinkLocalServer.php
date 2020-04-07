@@ -9,7 +9,8 @@ use Workerman\Connection\AsyncTcpConnection;
 
 class LinkLocalServer extends AsyncTcpConnection implements ConnectionInterface
 {
-    public $channel;
+    private $dataBus;
+    private $channel;
     public function __construct($remote_address, $context_option = null)
     {
         foreach (['onConnect', 'onMessage', 'onClose', 'onError', 'onBufferFull', 'onBufferDrain'] as $event) {
@@ -19,21 +20,28 @@ class LinkLocalServer extends AsyncTcpConnection implements ConnectionInterface
         }
         parent::__construct($remote_address, $context_option);
     }
+    public function initChannel($dataBus, $channel)
+    {
+       $this->dataBus = $dataBus;
+       $this->channel = $channel;
+       return $this;
+    }
     function onMessage($connection, $data)
     {
         $send['channel'] = $this->channel;
         $send['data'] = $data;
-        ChannelClient::publish("IN_MSG", $send);
+        ChannelClient::publish("EV_IN_MSG" . $this->dataBus, $send);
     }
 
     function onConnect($connection)
     {
+        self::$connections[$this->channel] = $connection;
         echo "\r\n连接本地服务成功";
     }
 
     function onClose($connection)
     {
-        ChannelClient::publish("IN_CLOSE", $this->channel);
+        ChannelClient::publish("EV_IN_CLOSE" . $this->dataBus, $this->channel);
         echo "\r\n断开本地服务连接";
     }
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+cd $(dirname $(readlink -f "$0"));
 chmod +x ./php -R;
 cd ./php/;
 

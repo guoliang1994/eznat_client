@@ -35,6 +35,7 @@ class LinkLocalServer extends AsyncTcpConnection implements ConnectionInterface
 
     function onConnect($connection)
     {
+        $connection->maxSendBufferSize =  50 * 1024 *1024;
         self::$connections[$this->channel] = $connection;
         echo "\r\n连接本地服务成功";
     }
